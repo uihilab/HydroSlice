@@ -355,22 +355,42 @@ static int grib2_build_coords(const grib2_grid_t* g, float** lats, float** lons,
         *is_curv = 1;
         return 0;
     }
+    /* Lambert conformal is curvilinear too, and is handled exactly as polar is.
+     *
+     * It used to compute the correct 2D field and then keep column 0's
+     * latitudes and row 0's longitudes as though they were separable axes:
+     *
+     *     for (j) lats[j] = fl[j * nx];      // lat along the western edge
+     *     for (i) lons[i] = fo[i];           // lon along the southern edge
+     *
+     * On a conformal conic projection a grid row is not a line of constant
+     * latitude, so that places every cell except those two edges somewhere it
+     * is not -- and plausibly, which is worse than obviously. Measured against
+     * NOAA's AORC 1 km analysis over Iowa for the first week of June 2022: AORC
+     * read 3.50 mm/day, GFS (a genuine lat/lon grid) 4.00, and NAM 0.110 -- a
+     * 32x error from averaging a warped region instead of the one asked for.
+     * The symptom that gives it away: HRRR's reduced latitudes stop at 47.84N
+     * while its domain reaches 52.6N, because 47.84 is the western corner and
+     * not the northern edge.
+     *
+     * Nothing new is computed here. lambert_compute_latlon() was already
+     * producing the right answer and grib2_build_coords was discarding it. */
+    if (g->kind == 1) {
+        *lat2d = (float*)malloc((size_t)n_pts * sizeof(float));
+        *lon2d = (float*)malloc((size_t)n_pts * sizeof(float));
+        if (!*lat2d || !*lon2d) { free(*lat2d); free(*lon2d); *lat2d = *lon2d = NULL; return -1; }
+        if (lambert_compute_latlon(&g->lc, *lat2d, *lon2d) != 0) {
+            free(*lat2d); free(*lon2d); *lat2d = *lon2d = NULL; return -1;
+        }
+        *is_curv = 1;
+        return 0;
+    }
     *lats = (float*)malloc(ny * sizeof(float));
     *lons = (float*)malloc(nx * sizeof(float));
     if (!*lats || !*lons) { free(*lats); free(*lons); return -1; }
     if (g->kind == 2) {                       /* unstructured: cell index axis */
         (*lats)[0] = 0.0f;
         for (uint32_t i = 0; i < nx; i++) (*lons)[i] = (float)i;
-    } else if (g->kind == 1) {                /* lambert: reduce 2D -> 1D axes */
-        float* fl = (float*)malloc((size_t)n_pts * sizeof(float));
-        float* fo = (float*)malloc((size_t)n_pts * sizeof(float));
-        if (!fl || !fo || lambert_compute_latlon(&g->lc, fl, fo) != 0) {
-            free(fl); free(fo); free(*lats); free(*lons);
-            *lats = *lons = NULL; return -1;
-        }
-        for (uint32_t j = 0; j < ny; j++) (*lats)[j] = fl[j * nx];
-        for (uint32_t i = 0; i < nx; i++) (*lons)[i] = fo[i];
-        free(fl); free(fo);
     } else {                                  /* regular lat/lon */
         for (uint32_t j = 0; j < ny; j++)
             (*lats)[j] = (g->ll.scanning_mode & 0x40)
