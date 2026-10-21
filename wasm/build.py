@@ -1,11 +1,13 @@
-import subprocess, sys, os
+import subprocess, sys, os, shutil
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-EMCC = r"C:\Users\Khoa Le\Downloads\emsdk-main\emsdk-main\upstream\emscripten\emcc.py"
+# $EMCC, then emcc on PATH (Homebrew, emsdk_env), then the original Windows emsdk.
+EMCC = (os.environ.get("EMCC") or shutil.which("emcc")
+        or r"C:\Users\Khoa Le\Downloads\emsdk-main\emsdk-main\upstream\emscripten\emcc.py")
 
 cmd = [
-    sys.executable, EMCC,
+    *([sys.executable, EMCC] if EMCC.endswith(".py") else [EMCC]),
     "-O2", "-std=c99", "-I..",
     "-sEXPORTED_RUNTIME_METHODS=['ccall','cwrap','UTF8ToString','stringToUTF8','lengthBytesUTF8','HEAPF32','HEAPF64','HEAPU8']",
     "-sEXPORTED_FUNCTIONS=['_wp_scan','_wp_scan_get_vars_json','_wp_scan_free',"
@@ -14,7 +16,7 @@ cmd = [
     "'_wp_nc3_full_layout',"
     "'_wp_open_from_float_arrays',"
     "'_wp_close','_wp_nx','_wp_ny','_wp_nt',"
-    "'_wp_ds_lats_ptr','_wp_ds_lons_ptr','_wp_ds_data_ptr',"
+    "'_wp_ds_lats_ptr','_wp_ds_lons_ptr','_wp_ds_data_ptr','_wp_ds_lat2d_ptr','_wp_ds_lon2d_ptr',"
     "'_wp_find_nearest_lat','_wp_find_nearest_lon','_wp_query','_wp_free','_wp_malloc','_wp_memcpy',"
     "'_wp_is_curvilinear','_wp_find_nearest_cell','_wp_cell_lat','_wp_cell_lon',"
     "'_wp_grid_coords','_wp_normalize_range','_wp_grid_resample_polar','_wp_scan_decode_cell',"
@@ -27,14 +29,15 @@ cmd = [
     "-sNO_EXIT_RUNTIME=1",
     "-o", "sciwrid.js",
     "wasm_api.c",
-    r"..\tools\query_refs.c",
-    r"..\core\util\base64.c",
-    r"..\helper\grib2converthelpers.c",
-    r"..\formats\grib2\grib2_metadata.c",
-    r"..\formats\netcdf\netcdf3.c",
+    os.path.join("..", "tools", "query_refs.c"),
+    os.path.join("..", "core", "util", "base64.c"),
+    os.path.join("..", "helper", "grib2converthelpers.c"),
+    os.path.join("..", "formats", "grib2", "grib2_metadata.c"),
+    os.path.join("..", "formats", "netcdf", "netcdf3.c"),
     "-lm",
 ]
 
 print("Building...")
 result = subprocess.run(cmd)
 print("\nBUILD SUCCESS" if result.returncode == 0 else "\nBUILD FAILED")
+sys.exit(result.returncode)

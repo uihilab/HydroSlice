@@ -1198,6 +1198,12 @@ float wp_cell_lon(const refs_dataset_t* ds, uint32_t iy, uint32_t ix) {
  *   wp_ds_lats_ptr  -> float[ny]
  *   wp_ds_lons_ptr  -> float[nx]
  *   wp_ds_data_ptr  -> float[nt*ny*nx], row-major [t, y, x]
+ *   wp_ds_lat2d_ptr -> float[ny*nx], row-major; NULL unless curvilinear
+ *   wp_ds_lon2d_ptr -> float[ny*nx], row-major; NULL unless curvilinear
+ *
+ * A curvilinear grid (polar stereographic, Lambert conformal) has no axes:
+ * wp_ds_lats_ptr/lons_ptr are NULL for it and the per-cell pair is the only
+ * place its coordinates live.
  */
 EMSCRIPTEN_KEEPALIVE
 const float* wp_ds_lats_ptr(const refs_dataset_t* ds) { return refs_lats(ds); }
@@ -1207,6 +1213,12 @@ const float* wp_ds_lons_ptr(const refs_dataset_t* ds) { return refs_lons(ds); }
 
 EMSCRIPTEN_KEEPALIVE
 const float* wp_ds_data_ptr(const refs_dataset_t* ds) { return refs_data(ds); }
+
+EMSCRIPTEN_KEEPALIVE
+const float* wp_ds_lat2d_ptr(const refs_dataset_t* ds) { return refs_lat2d(ds); }
+
+EMSCRIPTEN_KEEPALIVE
+const float* wp_ds_lon2d_ptr(const refs_dataset_t* ds) { return refs_lon2d(ds); }
 
 EMSCRIPTEN_KEEPALIVE
 uint32_t wp_find_nearest_lat(const refs_dataset_t* ds, double lat) {

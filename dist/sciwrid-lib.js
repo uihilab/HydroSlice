@@ -584,7 +584,9 @@ export class SciWridToolkit {
   }
 
   /* -----------------------------------------------------------------------
-   * _extractGridCurvilinear — window export for curvilinear (polar) GRIB2.
+   * _extractGridCurvilinear — window export for curvilinear GRIB2 grids
+   * (polar stereographic, and Lambert conformal since it stopped pretending to
+   * have separable axes).
    * Returns the resampled grid { data, width, height, bbox, variable, units,
    * time } if the variable's grid is curvilinear, else null (rectilinear →
    * caller falls through to the normal 1D-axis path). Decodes only timestep t.
@@ -755,20 +757,35 @@ export class SciWridToolkit {
       const nt = wasm.ccall('wp_nt', 'number', ['number'], [ds]);
       const tt = this._format === 'grib2' ? gridTT : Math.min(t, nt - 1);
 
-      const latsPtr = wasm.ccall('wp_ds_lats_ptr', 'number', ['number'], [ds]);
-      const lonsPtr = wasm.ccall('wp_ds_lons_ptr', 'number', ['number'], [ds]);
+      /* A curvilinear grid (polar, Lambert) has no axes -- wp_ds_lats_ptr and
+       * wp_ds_lons_ptr are NULL for it -- so its coordinates come from the
+       * per-cell pair, ny*nx long. */
+      const curvilinear = !!wasm.ccall('wp_is_curvilinear', 'number', ['number'], [ds]);
+      if (curvilinear && typeof wasm._wp_ds_lat2d_ptr !== 'function')
+        throw new Error('wp_ds_lat2d_ptr export missing — rebuild WASM (python wasm/build.py)');
+      const latsPtr = wasm.ccall(curvilinear ? 'wp_ds_lat2d_ptr' : 'wp_ds_lats_ptr', 'number', ['number'], [ds]);
+      const lonsPtr = wasm.ccall(curvilinear ? 'wp_ds_lon2d_ptr' : 'wp_ds_lons_ptr', 'number', ['number'], [ds]);
       const dataPtr = wasm.ccall('wp_ds_data_ptr', 'number', ['number'], [ds]);
 
       if (!latsPtr || !lonsPtr || !dataPtr)
         throw new Error('wp_ds_*_ptr exports missing — rebuild WASM (python wasm/build.py)');
 
+      /* A curvilinear grid carries a lat/lon per cell, not one axis per
+       * dimension, so its coordinate arrays are ny*nx long rather than ny and
+       * nx. Reading only the first ny and nx of them hands back the opening
+       * cells of row zero dressed up as axes, which is exactly how Lambert
+       * grids came to be sampled somewhere other than where they were asked
+       * for. `curvilinear` travels with the result so a caller cannot mistake
+       * one shape for the other; rectilinear grids are unchanged. */
+      const nCoord = curvilinear ? ny * nx : null;
+
       /* .slice() copies out of WASM heap to a JS-owned ArrayBuffer that survives wp_close. */
-      const lats = new Float32Array(wasm.HEAPF32.buffer, latsPtr, ny).slice();
-      const lons = new Float32Array(wasm.HEAPF32.buffer, lonsPtr, nx).slice();
+      const lats = new Float32Array(wasm.HEAPF32.buffer, latsPtr, nCoord ?? ny).slice();
+      const lons = new Float32Array(wasm.HEAPF32.buffer, lonsPtr, nCoord ?? nx).slice();
       const sliceOffset = dataPtr + tt * ny * nx * 4;
       const sliceData   = new Float32Array(wasm.HEAPF32.buffer, sliceOffset, ny * nx).slice();
 
-      return { lats, lons, sliceData, ny, nx, nt, units: v.units || '' };
+      return { lats, lons, sliceData, ny, nx, nt, curvilinear, units: v.units || '' };
     } finally {
       wasm.ccall('wp_close', null, ['number'], [ds]);
     }
