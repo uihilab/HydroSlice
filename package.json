@@ -1,5 +1,5 @@
 {
-  "name": "sciwrid-toolkit",
+  "name": "hydroslice",
   "version": "0.1.0",
   "description": "WebAssembly library for parsing meteorological and geospatial data formats (GRIB2, NetCDF3, NetCDF4/HDF5, Zarr v2, TIFF/GeoTIFF) in the browser, Web Workers, and Node.js",
   "type": "module",

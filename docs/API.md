@@ -1,4 +1,4 @@
-# SciWrid Toolkit — JavaScript / TypeScript API
+# HydroSlice — JavaScript / TypeScript API
 
 A WebAssembly-powered library for parsing meteorological and geospatial data
 formats. New here? Jump to **[Choosing your pathway](#choosing-your-pathway)** —
@@ -55,7 +55,7 @@ Reusing one loaded file for many queries? ............ SciWridToolkit (class) �
 | Render a grid for a web map                  | [`gridToImageData`](#gridtoimagedatagrid-opts) / [`gridToPNG`](#gridtopnggrid-opts) | RGBA / PNG       |
 | Save a grid as a raster                      | [`gridToGeoTIFF`](#map-rendering) / `gridToJSON` | `Uint8Array` / `string`           |
 | Trim a huge file, same format                | [`trim`](#trimsource-options)                 | `{ bytes, … }`                       |
-| Reuse one loaded file across queries         | [`SciWridToolkit` class](#class-based-api-SciWrid Toolkit) | instance                         |
+| Reuse one loaded file across queries         | [`SciWridToolkit` class](#class-based-api-sciwridtoolkit) | instance                         |
 
 Every reader produces the **same** `scan` / `extract` / `extractGrid` shapes
 regardless of format, so once you've chosen a pathway it works identically for
@@ -67,7 +67,7 @@ decoded, read the reader sources under `lib/`.
 ## Library structure
 
 ```
-sciwrid-toolkit/
+hydroslice/
 ├── index.js          ← front-facing entry point  (import from here)
 ├── index.d.ts        ← TypeScript types
 ├── lib/              ← JavaScript library source (internal — do not import directly)
@@ -85,7 +85,7 @@ sciwrid-toolkit/
 
 All public symbols are re-exported through `index.js` (which `npm run build`
 bundles into `dist/index.js`). Files inside `lib/`, `wasm/`, and `worker/` are
-internal — import only from the package root (`'sciwrid-toolkit'`).
+internal — import only from the package root (`'hydroslice'`).
 
 ---
 
@@ -102,13 +102,13 @@ npm install git+https://github.com/uihilab/SciWrid-Toolkit.git
 
 ```js
 // Functional API — recommended for most consumers
-import { detectFormat, scan, extract, extractOutput } from 'sciwrid-toolkit';
+import { detectFormat, scan, extract, extractOutput } from 'hydroslice';
 
 // Error classes — same package, no extra import path needed
-import { SciWridError, UnsupportedFormatError, VariableNotFoundError } from 'sciwrid-toolkit';
+import { SciWridError, UnsupportedFormatError, VariableNotFoundError } from 'hydroslice';
 
 // Class-based API — for advanced / low-level use
-import { SciWridToolkit } from 'sciwrid-toolkit';
+import { SciWridToolkit } from 'hydroslice';
 ```
 
 TypeScript types ship with the package — no `@types/*` needed.
@@ -499,7 +499,7 @@ a single point — heat maps, raster export, tiles.
 | `onProgress` | `({done, total}) => void`     | Called as output cells are filled.                                 |
 
 ```js
-import { extractGrid } from 'sciwrid-toolkit';
+import { extractGrid } from 'hydroslice';
 
 const controller = new AbortController();
 
@@ -575,7 +575,7 @@ The encoder layer on its own, for callers who **already hold a result** and do
 not want to extract it again:
 
 ```js
-import { extractGrid, encodeGrid, EXPORT_FORMATS } from 'sciwrid-toolkit';
+import { extractGrid, encodeGrid, EXPORT_FORMATS } from 'hydroslice';
 
 const grid = await extractGrid(file, { variable: 'TMP', bbox, width: 512, height: 512 });
 
@@ -685,7 +685,7 @@ This means `lat: 0, lon: 0` lands on grid point `(0, 0)`, and `t1: 0, t2: 5` ret
 six time steps. Real geographic queries require external coordinate data (planned for a future sprint).
 
 ```js
-import { scan, extract } from 'sciwrid-toolkit';
+import { scan, extract } from 'hydroslice';
 import { readFileSync } from 'node:fs';
 
 const file = new Uint8Array(readFileSync('data.zarr.zip'));
@@ -756,7 +756,7 @@ store whose spatial chunks span the whole dimension will not shrink along
 lat/lon.
 
 ```js
-import { trim } from 'sciwrid-toolkit';
+import { trim } from 'hydroslice';
 
 const result = await trim(file, {
   variables: ['2t', 'sp'],   // names from scan().variable_names
@@ -881,7 +881,7 @@ The Range source falls back to a full-body GET if the server responds 200 to `Ra
 ### Unsupported CRS
 
 ```js
-import { UnsupportedCRSError } from 'sciwrid-toolkit';
+import { UnsupportedCRSError } from 'hydroslice';
 
 try { await scan(polarStereoTiff); }
 catch (e) {
@@ -920,7 +920,7 @@ anomalies / temperatures). Pass a built-in name **or** a custom array of
 in RGB.
 
 ```js
-import { RAMPS, resolveRamp, sampleRamp } from 'sciwrid-toolkit';
+import { RAMPS, resolveRamp, sampleRamp } from 'hydroslice';
 
 sampleRamp(resolveRamp('viridis'), 0.5);          // → [38, 130, 142]
 const custom = [[0, [0, 0, 0]], [1, [255, 0, 0]]]; // black → red
@@ -951,7 +951,7 @@ Same options as `gridToImageData`, but returns a PNG (`Promise<Uint8Array>`) —
 the browser, with no extra dependency.
 
 ```js
-import { extractGrid, gridToPNG } from 'sciwrid-toolkit';
+import { extractGrid, gridToPNG } from 'hydroslice';
 import { writeFileSync } from 'node:fs';
 
 const grid = await extractGrid(file, { variable: '2t', bbox, width: 512, height: 512 });
@@ -964,7 +964,7 @@ writeFileSync('temp.png', await gridToPNG(grid, { ramp: 'RdBu' }));
 ### Full pipeline → MapLibre `ImageSource`
 
 ```js
-import { extractGrid, gridToImageData } from 'sciwrid-toolkit';
+import { extractGrid, gridToImageData } from 'hydroslice';
 
 const grid = await extractGrid(file, { variable, bbox, width: 1024, height: 1024 });
 const img  = gridToImageData(grid, { ramp: 'viridis' });
@@ -992,7 +992,7 @@ Run it with `npm run demo:web`.
 For cases where you need to reuse a single loaded file across multiple queries:
 
 ```js
-import { SciWridToolkit } from 'sciwrid-toolkit';
+import { SciWridToolkit } from 'hydroslice';
 
 const parser = new SciWridToolkit();
 await parser.read(fileBytes);              // load once
@@ -1018,7 +1018,7 @@ import {
   VariableNotFoundError,
   SourceError,
   ExtractError,
-} from 'sciwrid-toolkit';
+} from 'hydroslice';
 
 try {
   await scan(unknownBytes);
@@ -1047,7 +1047,7 @@ The library ships as ESM and works in Node 18+ out of the box — no extra setup
 
 ```js
 import { readFileSync } from 'node:fs';
-import { scan, extract } from 'sciwrid-toolkit';
+import { scan, extract } from 'hydroslice';
 
 const file = new Uint8Array(readFileSync('forecast.grb2'));
 
@@ -1077,13 +1077,13 @@ Import via a bundler (Vite, webpack, etc.) or use an import map for bare module 
 <script type="importmap">
 {
   "imports": {
-    "sciwrid-toolkit": "/node_modules/sciwrid-toolkit/index.js",
+    "hydroslice": "/node_modules/hydroslice/index.js",
     "h5wasm":     "/node_modules/h5wasm/dist/esm/hdf5_hl.js"
   }
 }
 </script>
 <script type="module">
-  import { scan } from 'sciwrid-toolkit';
+  import { scan } from 'hydroslice';
 
   document.querySelector('#file').addEventListener('change', async (e) => {
     const meta = await scan(e.target.files[0]);
@@ -1095,5 +1095,5 @@ Import via a bundler (Vite, webpack, etc.) or use an import map for bare module 
 With a bundler (recommended for production), the import map is not needed — just:
 
 ```js
-import { scan } from 'sciwrid-toolkit';
+import { scan } from 'hydroslice';
 ```

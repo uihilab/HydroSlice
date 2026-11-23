@@ -1,5 +1,5 @@
 /**
- * SciWrid Toolkit — front-facing entry point
+ * HydroSlice — front-facing entry point
  *
  * Parses meteorological and geospatial data formats (GRIB2, NetCDF3,
  * NetCDF4/HDF5, Zarr v2, TIFF/GeoTIFF) in the browser, Web Workers, and
@@ -7,7 +7,7 @@
  *
  * ── Quick-start (functional API) ────────────────────────────────────────────
  *
- *   import { scan, extract, extractGrid, trim, detectFormat } from 'sciwrid-toolkit';
+ *   import { scan, extract, extractGrid, trim, detectFormat } from 'hydroslice';
  *
  *   // Scan a file — returns metadata + variable list
  *   const meta = await scan('https://example.com/forecast.grb2');
@@ -24,7 +24,7 @@
  *
  * ── Class-based API (advanced) ───────────────────────────────────────────────
  *
- *   import { SciWridToolkit } from 'sciwrid-toolkit';
+ *   import { SciWridToolkit } from 'hydroslice';
  *
  *   const parser = new SciWridToolkit();
  *   await parser.read(fileBytes);

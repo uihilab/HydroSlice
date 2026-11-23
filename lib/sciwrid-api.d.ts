@@ -1,5 +1,5 @@
 /**
- * Type definitions for the SciWrid Toolkit functional API.
+ * Type definitions for the HydroSlice functional API.
  */
 
 export type Format = 'grib2' | 'netcdf3' | 'netcdf4' | 'zarr' | 'tiff';

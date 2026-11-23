@@ -1,5 +1,5 @@
 /**
- * Type definitions for the SciWrid Toolkit library.
+ * Type definitions for the HydroSlice library.
  */
 
 // Re-export all types and function signatures from the internal API module.

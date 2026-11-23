@@ -1,8 +1,8 @@
-# Contributing to SciWrid Toolkit
+# Contributing to HydroSlice
 
 ## Toolchain at a glance
 
-SciWrid Toolkit is a **JavaScript/TypeScript library** with a small C core compiled
+HydroSlice is a **JavaScript/TypeScript library** with a small C core compiled
 to WebAssembly. The compiled `wasm/sciwrid.wasm` is committed, so day-to-day
 work needs only **Node 18+** - no Python, no Emscripten.
 
