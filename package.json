@@ -6,11 +6,11 @@
   "author": "Khoa Le <dle5@tulane.edu>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/uihilab/SciWrid-Toolkit.git"
+    "url": "git+https://github.com/uihilab/HydroSlice.git"
   },
-  "homepage": "https://github.com/uihilab/SciWrid-Toolkit#readme",
+  "homepage": "https://github.com/uihilab/HydroSlice#readme",
   "bugs": {
-    "url": "https://github.com/uihilab/SciWrid-Toolkit/issues"
+    "url": "https://github.com/uihilab/HydroSlice/issues"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

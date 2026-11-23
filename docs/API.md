@@ -93,7 +93,7 @@ internal — import only from the package root (`'hydroslice'`).
 
 ```bash
 # from GitHub (until published to npm)
-npm install git+https://github.com/uihilab/SciWrid-Toolkit.git
+npm install git+https://github.com/uihilab/HydroSlice.git
 ```
 
 ---
