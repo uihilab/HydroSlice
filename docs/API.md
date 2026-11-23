@@ -1,4 +1,4 @@
-# SciWrid Toolkit — JavaScript / TypeScript API
+# HydroSlice — JavaScript / TypeScript API
 
 A WebAssembly-powered library for parsing meteorological and geospatial data
 formats. New here? Jump to **[Choosing your pathway](#choosing-your-pathway)** —
@@ -40,7 +40,7 @@ You have a file / URL / bytes
                                                               └─ save as a raster  → gridToGeoTIFF / gridToJSON
 
 Want a smaller file, same format out?  ............... trim               → { bytes, … }
-Reusing one loaded file for many queries? ............ SciWridToolkit (class) → instance
+Reusing one loaded file for many queries? ............ HydroSlice (class) → instance
 ```
 
 | I want to…                                  | Function                          | Returns                              |
@@ -55,7 +55,7 @@ Reusing one loaded file for many queries? ............ SciWridToolkit (class) �
 | Render a grid for a web map                  | [`gridToImageData`](#gridtoimagedatagrid-opts) / [`gridToPNG`](#gridtopnggrid-opts) | RGBA / PNG       |
 | Save a grid as a raster                      | [`gridToGeoTIFF`](#map-rendering) / `gridToJSON` | `Uint8Array` / `string`           |
 | Trim a huge file, same format                | [`trim`](#trimsource-options)                 | `{ bytes, … }`                       |
-| Reuse one loaded file across queries         | [`SciWridToolkit` class](#class-based-api-SciWrid Toolkit) | instance                         |
+| Reuse one loaded file across queries         | [`HydroSlice` class](#class-based-api-hydroslice) | instance                         |
 
 Every reader produces the **same** `scan` / `extract` / `extractGrid` shapes
 regardless of format, so once you've chosen a pathway it works identically for
@@ -67,25 +67,25 @@ decoded, read the reader sources under `lib/`.
 ## Library structure
 
 ```
-sciwrid-toolkit/
+hydroslice/
 ├── index.js          ← front-facing entry point  (import from here)
 ├── index.d.ts        ← TypeScript types
 ├── lib/              ← JavaScript library source (internal — do not import directly)
-│   ├── sciwrid-api.js    functional API (scan/extract/extractGrid/trim/…)
-│   ├── sciwrid-lib.js    core class (SciWridToolkit)
+│   ├── hydroslice-api.js    functional API (scan/extract/extractGrid/trim/…)
+│   ├── hydroslice-lib.js    core class (HydroSlice)
 │   ├── zarr-helper.js       Zarr v2 helper           tiff-helper.js  TIFF/GeoTIFF
 │   ├── render/              color ramps + grid → RGBA / PNG
 │   └── trim/                in-place file trimming (per-format)
 ├── wasm/             ← compiled C core (internal)
-│   ├── sciwrid.js        Emscripten WASM loader
-│   └── sciwrid.wasm      compiled C binary
+│   ├── hydroslice.js        Emscripten WASM loader
+│   └── hydroslice.wasm      compiled C binary
 ├── worker/           ← Web Worker for parallel bbox extraction
 └── dist/             ← the published, bundled package (produced by `npm run build`)
 ```
 
 All public symbols are re-exported through `index.js` (which `npm run build`
 bundles into `dist/index.js`). Files inside `lib/`, `wasm/`, and `worker/` are
-internal — import only from the package root (`'sciwrid-toolkit'`).
+internal — import only from the package root (`'hydroslice'`).
 
 ---
 
@@ -93,7 +93,7 @@ internal — import only from the package root (`'sciwrid-toolkit'`).
 
 ```bash
 # from GitHub (until published to npm)
-npm install git+https://github.com/uihilab/SciWrid-Toolkit.git
+npm install git+https://github.com/uihilab/HydroSlice.git
 ```
 
 ---
@@ -102,13 +102,13 @@ npm install git+https://github.com/uihilab/SciWrid-Toolkit.git
 
 ```js
 // Functional API — recommended for most consumers
-import { detectFormat, scan, extract, extractOutput } from 'sciwrid-toolkit';
+import { detectFormat, scan, extract, extractOutput } from 'hydroslice';
 
 // Error classes — same package, no extra import path needed
-import { SciWridError, UnsupportedFormatError, VariableNotFoundError } from 'sciwrid-toolkit';
+import { HydroSliceError, UnsupportedFormatError, VariableNotFoundError } from 'hydroslice';
 
 // Class-based API — for advanced / low-level use
-import { SciWridToolkit } from 'sciwrid-toolkit';
+import { HydroSlice } from 'hydroslice';
 ```
 
 TypeScript types ship with the package — no `@types/*` needed.
@@ -234,7 +234,7 @@ in native units and the reason is reported rather than silently mislabelled.
 
 A GRIB2 message does not carry a name or a unit. It carries three integers —
 discipline (Section 0), parameter category and parameter number (Section 4) —
-and the meaning lives in **WMO Code Table 4.2**. SciWrid ships that table
+and the meaning lives in **WMO Code Table 4.2**. HydroSlice ships that table
 (`formats/grib2/grib2_param_table.h`, generated), so `scan()`, `extract()` and
 `extractGrid()` all report a real name and real units. `scan()` also exposes the
 `discipline` and `centre` a name depends on.
@@ -434,7 +434,7 @@ bound given as a **date only** (`YYYY-MM-DD`, no time) expands to the whole UTC
 day — start → `00:00:00.000`, end → `23:59:59.999` — and every timestep inside
 the window is kept. So `dateRange: ['1990-01-01', '1990-01-01']` selects all
 timesteps on that day, no need to spell out the time. Mixing a date option with
-an integer index for the same axis throws `SciWridError`. For
+an integer index for the same axis throws `HydroSliceError`. For
 Zarr arrays without CF time metadata the synthetic axis is `step t = t days`
 (`t·86400 s`), so a date is matched against that. Files with a single timestep
 (or no time axis) resolve any date to index 0. `trim` remains index-only.
@@ -499,7 +499,7 @@ a single point — heat maps, raster export, tiles.
 | `onProgress` | `({done, total}) => void`     | Called as output cells are filled.                                 |
 
 ```js
-import { extractGrid } from 'sciwrid-toolkit';
+import { extractGrid } from 'hydroslice';
 
 const controller = new AbortController();
 
@@ -575,7 +575,7 @@ The encoder layer on its own, for callers who **already hold a result** and do
 not want to extract it again:
 
 ```js
-import { extractGrid, encodeGrid, EXPORT_FORMATS } from 'sciwrid-toolkit';
+import { extractGrid, encodeGrid, EXPORT_FORMATS } from 'hydroslice';
 
 const grid = await extractGrid(file, { variable: 'TMP', bbox, width: 512, height: 512 });
 
@@ -605,7 +605,7 @@ EXPORT_FORMATS.filter(f => f.series).map(f => f.label);
 ```
 
 A format that cannot represent the result throws `UnsupportedExportError`
-(extends `SciWridError`) and the message names the formats that can. GeoTIFF
+(extends `HydroSliceError`) and the message names the formats that can. GeoTIFF
 and GRIB2 refuse a point series rather than writing a misleading 1×1 raster.
 
 ### GRIB2 needs a parameter code
@@ -685,7 +685,7 @@ This means `lat: 0, lon: 0` lands on grid point `(0, 0)`, and `t1: 0, t2: 5` ret
 six time steps. Real geographic queries require external coordinate data (planned for a future sprint).
 
 ```js
-import { scan, extract } from 'sciwrid-toolkit';
+import { scan, extract } from 'hydroslice';
 import { readFileSync } from 'node:fs';
 
 const file = new Uint8Array(readFileSync('data.zarr.zip'));
@@ -756,7 +756,7 @@ store whose spatial chunks span the whole dimension will not shrink along
 lat/lon.
 
 ```js
-import { trim } from 'sciwrid-toolkit';
+import { trim } from 'hydroslice';
 
 const result = await trim(file, {
   variables: ['2t', 'sp'],   // names from scan().variable_names
@@ -881,7 +881,7 @@ The Range source falls back to a full-body GET if the server responds 200 to `Ra
 ### Unsupported CRS
 
 ```js
-import { UnsupportedCRSError } from 'sciwrid-toolkit';
+import { UnsupportedCRSError } from 'hydroslice';
 
 try { await scan(polarStereoTiff); }
 catch (e) {
@@ -920,7 +920,7 @@ anomalies / temperatures). Pass a built-in name **or** a custom array of
 in RGB.
 
 ```js
-import { RAMPS, resolveRamp, sampleRamp } from 'sciwrid-toolkit';
+import { RAMPS, resolveRamp, sampleRamp } from 'hydroslice';
 
 sampleRamp(resolveRamp('viridis'), 0.5);          // → [38, 130, 142]
 const custom = [[0, [0, 0, 0]], [1, [255, 0, 0]]]; // black → red
@@ -951,7 +951,7 @@ Same options as `gridToImageData`, but returns a PNG (`Promise<Uint8Array>`) —
 the browser, with no extra dependency.
 
 ```js
-import { extractGrid, gridToPNG } from 'sciwrid-toolkit';
+import { extractGrid, gridToPNG } from 'hydroslice';
 import { writeFileSync } from 'node:fs';
 
 const grid = await extractGrid(file, { variable: '2t', bbox, width: 512, height: 512 });
@@ -964,7 +964,7 @@ writeFileSync('temp.png', await gridToPNG(grid, { ramp: 'RdBu' }));
 ### Full pipeline → MapLibre `ImageSource`
 
 ```js
-import { extractGrid, gridToImageData } from 'sciwrid-toolkit';
+import { extractGrid, gridToImageData } from 'hydroslice';
 
 const grid = await extractGrid(file, { variable, bbox, width: 1024, height: 1024 });
 const img  = gridToImageData(grid, { ramp: 'viridis' });
@@ -987,14 +987,14 @@ Run it with `npm run demo:web`.
 
 ---
 
-## Class-based API (`SciWridToolkit`)
+## Class-based API (`HydroSlice`)
 
 For cases where you need to reuse a single loaded file across multiple queries:
 
 ```js
-import { SciWridToolkit } from 'sciwrid-toolkit';
+import { HydroSlice } from 'hydroslice';
 
-const parser = new SciWridToolkit();
+const parser = new HydroSlice();
 await parser.read(fileBytes);              // load once
 
 const vars = parser.getvariables();        // same as scan().variables
@@ -1009,16 +1009,16 @@ parser.close();                            // always free WASM memory when done
 
 ## Error handling
 
-All errors extend `SciWridError`:
+All errors extend `HydroSliceError`:
 
 ```js
 import {
-  SciWridError,
+  HydroSliceError,
   UnsupportedFormatError,
   VariableNotFoundError,
   SourceError,
   ExtractError,
-} from 'sciwrid-toolkit';
+} from 'hydroslice';
 
 try {
   await scan(unknownBytes);
@@ -1037,7 +1037,7 @@ try {
 | `VariableNotFoundError`  | Named variable absent or not `supported: true`        |
 | `SourceError`            | URL fetch failed, unsupported source type             |
 | `ExtractError`           | Decoder failed for a variable the library knows about |
-| `SciWridError`        | Base class — catches anything thrown by this library  |
+| `HydroSliceError`        | Base class — catches anything thrown by this library  |
 
 ---
 
@@ -1047,7 +1047,7 @@ The library ships as ESM and works in Node 18+ out of the box — no extra setup
 
 ```js
 import { readFileSync } from 'node:fs';
-import { scan, extract } from 'sciwrid-toolkit';
+import { scan, extract } from 'hydroslice';
 
 const file = new Uint8Array(readFileSync('forecast.grb2'));
 
@@ -1077,13 +1077,13 @@ Import via a bundler (Vite, webpack, etc.) or use an import map for bare module 
 <script type="importmap">
 {
   "imports": {
-    "sciwrid-toolkit": "/node_modules/sciwrid-toolkit/index.js",
+    "hydroslice": "/node_modules/hydroslice/index.js",
     "h5wasm":     "/node_modules/h5wasm/dist/esm/hdf5_hl.js"
   }
 }
 </script>
 <script type="module">
-  import { scan } from 'sciwrid-toolkit';
+  import { scan } from 'hydroslice';
 
   document.querySelector('#file').addEventListener('change', async (e) => {
     const meta = await scan(e.target.files[0]);
@@ -1095,5 +1095,5 @@ Import via a bundler (Vite, webpack, etc.) or use an import map for bare module 
 With a bundler (recommended for production), the import map is not needed — just:
 
 ```js
-import { scan } from 'sciwrid-toolkit';
+import { scan } from 'hydroslice';
 ```

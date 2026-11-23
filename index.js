@@ -1,5 +1,5 @@
 /**
- * SciWrid Toolkit — front-facing entry point
+ * HydroSlice — front-facing entry point
  *
  * Parses meteorological and geospatial data formats (GRIB2, NetCDF3,
  * NetCDF4/HDF5, Zarr v2, TIFF/GeoTIFF) in the browser, Web Workers, and
@@ -7,7 +7,7 @@
  *
  * ── Quick-start (functional API) ────────────────────────────────────────────
  *
- *   import { scan, extract, extractGrid, trim, detectFormat } from 'sciwrid-toolkit';
+ *   import { scan, extract, extractGrid, trim, detectFormat } from 'hydroslice';
  *
  *   // Scan a file — returns metadata + variable list
  *   const meta = await scan('https://example.com/forecast.grb2');
@@ -24,9 +24,9 @@
  *
  * ── Class-based API (advanced) ───────────────────────────────────────────────
  *
- *   import { SciWridToolkit } from 'sciwrid-toolkit';
+ *   import { HydroSlice } from 'hydroslice';
  *
- *   const parser = new SciWridToolkit();
+ *   const parser = new HydroSlice();
  *   await parser.read(fileBytes);
  *   const vars = parser.getvariables();
  *   const data = await parser.extract({ variable: 'TMP', lat: 40.7, lon: -74.0 });
@@ -42,8 +42,8 @@
  *   Zarr v2 (zip)     (.zip, .zarr)      — null/gzip/zlib/blosc/zstd/lz4
  *   TIFF / GeoTIFF    (.tif, .tiff)      — incl. Cloud-Optimized GeoTIFF over HTTP Range
  *
- * ── Error types (all extend SciWridError) ─────────────────────────────────
- *   SciWridError, UnsupportedFormatError, VariableNotFoundError,
+ * ── Error types (all extend HydroSliceError) ─────────────────────────────────
+ *   HydroSliceError, UnsupportedFormatError, VariableNotFoundError,
  *   SourceError, ExtractError, TrimError, UnsupportedCRSError
  */
 
@@ -74,7 +74,7 @@ export {
   sampleRamp,
   detectFormat,
   trim,
-} from './lib/sciwrid-api.js';
+} from './lib/hydroslice-api.js';
 
 // ── Render helpers not surfaced by the functional API ───────────────────────
 // autoRange lives only in lib/render/index.js, so a bundle built from this file
@@ -84,7 +84,7 @@ export { autoRange } from './lib/render/index.js';
 
 // ── Typed error classes ───────────────────────────────────────────────────────
 export {
-  SciWridError,
+  HydroSliceError,
   UnsupportedFormatError,
   VariableNotFoundError,
   SourceError,
@@ -92,11 +92,11 @@ export {
   TrimError,
   UnsupportedCRSError,
   UnsupportedExportError,
-} from './lib/sciwrid-api.js';
+} from './lib/hydroslice-api.js';
 
 // ── Low-level class API ───────────────────────────────────────────────────────
 // The main toolkit class, for reusing one loaded file across many queries.
-export { SciWridToolkit } from './lib/sciwrid-lib.js';
+export { HydroSlice } from './lib/hydroslice-lib.js';
 
 // ── Default export — the class, for convenience ───────────────────────────────
-export { default } from './lib/sciwrid-lib.js';
+export { default } from './lib/hydroslice-lib.js';

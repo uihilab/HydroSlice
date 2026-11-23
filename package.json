@@ -1,16 +1,16 @@
 {
-  "name": "sciwrid-toolkit",
+  "name": "hydroslice",
   "version": "0.1.0",
   "description": "WebAssembly library for parsing meteorological and geospatial data formats (GRIB2, NetCDF3, NetCDF4/HDF5, Zarr v2, TIFF/GeoTIFF) in the browser, Web Workers, and Node.js",
   "type": "module",
   "author": "Khoa Le <dle5@tulane.edu>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/uihilab/SciWrid-Toolkit.git"
+    "url": "git+https://github.com/uihilab/HydroSlice.git"
   },
-  "homepage": "https://github.com/uihilab/SciWrid-Toolkit#readme",
+  "homepage": "https://github.com/uihilab/HydroSlice#readme",
   "bugs": {
-    "url": "https://github.com/uihilab/SciWrid-Toolkit/issues"
+    "url": "https://github.com/uihilab/HydroSlice/issues"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -21,8 +21,8 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./wasm": "./dist/sciwrid.js",
-    "./wasm-binary": "./dist/sciwrid.wasm",
+    "./wasm": "./dist/hydroslice.js",
+    "./wasm-binary": "./dist/hydroslice.wasm",
     "./worker": "./dist/loader.js"
   },
   "files": [

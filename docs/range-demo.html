@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>SciWrid — HTTP Range fetch test</title>
+<title>HydroSlice — HTTP Range fetch test</title>
 <style>
   :root { color-scheme: light dark; }
   body { font: 14px/1.55 system-ui, sans-serif; margin: 0 auto; padding: 28px;
@@ -45,7 +45,7 @@
   }
 </style>
 
-<h1>SciWrid — HTTP Range fetch test</h1>
+<h1>HydroSlice — HTTP Range fetch test</h1>
 <p class="sub">Can range-native extraction run <em>from a browser</em>? Paste a URL
 below. This runs the same steps the library does and reports exactly where it
 succeeds or fails, including how many bytes it actually moved.</p>
@@ -90,7 +90,7 @@ succeeds or fails, including how many bytes it actually moved.</p>
 <script type="module">
 // Import the SOURCE entry, not dist/index.js — the bundle hoists a top-level
 // `import ... from "node:fs"` that no browser can resolve.
-import { extract, detectFormat } from 'https://cdn.jsdelivr.net/gh/uihilab/SciWrid-Toolkit@main/dist/index.js';
+import { extract, detectFormat } from 'https://cdn.jsdelivr.net/gh/uihilab/HydroSlice@main/dist/index.js';
 
 // Captured before anything can wrap it, so the byte meter always measures real
 // network calls and always restores a clean fetch.

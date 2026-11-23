@@ -1,5 +1,5 @@
 /*
- * scripts/build-logo.js — turn the supplied SciWrid artwork into a usable mark.
+ * scripts/build-logo.js — turn the supplied HydroSlice artwork into a usable mark.
  *
  * The source PNG shows a transparent-looking checkerboard, but the checkerboard
  * is BAKED IN: every pixel is opaque (alpha 0% transparent across the whole
@@ -31,8 +31,8 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const SRC = process.argv[2] || resolve(ROOT, 'assets/logo-sciwrid-source.png');
-const OUT = resolve(ROOT, 'assets/logo-sciwrid.png');
+const SRC = process.argv[2] || resolve(ROOT, 'assets/logo-hydroslice-source.png');
+const OUT = resolve(ROOT, 'assets/logo-hydroslice.png');
 const SIZE = 256;              // square master; the 32 px header slot is 8x down
 
 const CHECKER_PITCH = 16;      // measured on the source

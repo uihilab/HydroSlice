@@ -1,5 +1,5 @@
 /**
- * Type definitions for the SciWrid Toolkit functional API.
+ * Type definitions for the HydroSlice functional API.
  */
 
 export type Format = 'grib2' | 'netcdf3' | 'netcdf4' | 'zarr' | 'tiff';
@@ -281,17 +281,17 @@ export interface ExtractGridResult {
 }
 
 /* ---- Error classes ---- */
-export class SciWridError extends Error {}
-export class UnsupportedFormatError extends SciWridError {}
-export class VariableNotFoundError extends SciWridError {}
-export class SourceError extends SciWridError {}
-export class ExtractError extends SciWridError {}
+export class HydroSliceError extends Error {}
+export class UnsupportedFormatError extends HydroSliceError {}
+export class VariableNotFoundError extends HydroSliceError {}
+export class SourceError extends HydroSliceError {}
+export class ExtractError extends HydroSliceError {}
 
 /** Thrown by the TIFF/GeoTIFF reader for CRS outside the v1 supported set. */
 /** A format cannot represent what it was handed; the message names alternatives. */
-export class UnsupportedExportError extends SciWridError {}
+export class UnsupportedExportError extends HydroSliceError {}
 
-export class UnsupportedCRSError extends SciWridError {
+export class UnsupportedCRSError extends HydroSliceError {
   /** EPSG code parsed from the GeoKey directory (null if unparseable). */
   epsg: number | null;
   /** Free-text CRS name when available. */
@@ -436,7 +436,7 @@ export interface TrimResult {
 /** Produce a smaller file in the same format containing only the selected variables/time range. */
 export function trim(source: Source, opts: TrimOptions): Promise<TrimResult>;
 
-export class TrimError extends SciWridError {}
+export class TrimError extends HydroSliceError {}
 
 declare const _default: {
   detectFormat: typeof detectFormat;
@@ -453,7 +453,7 @@ declare const _default: {
   resolveRamp: typeof resolveRamp;
   sampleRamp: typeof sampleRamp;
   trim: typeof trim;
-  SciWridError: typeof SciWridError;
+  HydroSliceError: typeof HydroSliceError;
   UnsupportedFormatError: typeof UnsupportedFormatError;
   VariableNotFoundError: typeof VariableNotFoundError;
   SourceError: typeof SourceError;

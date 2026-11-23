@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SciWrid Toolkit - Library Usage Example</title>
+  <title>HydroSlice - Library Usage Example</title>
   <style>
     :root {
       --radius: 0.625rem;
@@ -227,9 +227,9 @@
   <header class="site-header">
     <div class="site-header-inner">
       <a class="brand" href="index.html">
-        <img class="brand-mark" src="logo-sciwrid.svg" alt="SciWrid" width="32" height="32">
+        <img class="brand-mark" src="logo-hydroslice.svg" alt="HydroSlice" width="32" height="32">
         <span>
-          <strong>SciWrid Toolkit</strong>
+          <strong>HydroSlice</strong>
           <span>Library usage</span>
         </span>
       </a>
@@ -239,7 +239,7 @@
         <a href="map-demo.html">Map demo</a>
         <button id="theme-toggle" type="button" aria-label="Toggle light/dark theme">◐</button>
         <span class="hilab">
-          <img src="https://cdn.jsdelivr.net/gh/uihilab/SciWrid-Toolkit@main/assets/logo-hilab-mini.png" alt="HiLab" width="662" height="283">
+          <img src="https://cdn.jsdelivr.net/gh/uihilab/HydroSlice@main/assets/logo-hilab-mini.png" alt="HiLab" width="662" height="283">
         </span>
       </nav>
     </div>
@@ -260,9 +260,9 @@
         </svg>
       </div>
       <p class="kicker">Class API</p>
-      <h1>SciWrid Toolkit — library usage</h1>
+      <h1>HydroSlice — library usage</h1>
       <p>
-        Importing <code>SciWrid Toolkit</code> as a library and driving its class-based
+        Importing <code>HydroSlice</code> as a library and driving its class-based
         public API: load a file once, then reuse the instance across metadata and
         extract calls.
       </p>
@@ -336,15 +336,15 @@
   </script>
 
   <!-- Load WASM (the Emscripten-generated loader) -->
-  <script src="https://cdn.jsdelivr.net/gh/uihilab/SciWrid-Toolkit@main/wasm/sciwrid.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/uihilab/HydroSlice@main/wasm/hydroslice.js"></script>
 
   <!-- Use the library as an ES module -->
   <script type="module">
-    import { SciWridToolkit } from 'https://cdn.jsdelivr.net/gh/uihilab/SciWrid-Toolkit@main/dist/index.js';
+    import { HydroSlice } from 'https://cdn.jsdelivr.net/gh/uihilab/HydroSlice@main/dist/index.js';
 
     // === This is the public library API ===
-    // Pass SciWridToolkit factory explicitly — avoids global lookup issues
-    const lib = new SciWridToolkit({ wasmFactory: SciWridToolkit });
+    // Pass HydroSlice factory explicitly — avoids global lookup issues
+    const lib = new HydroSlice({ wasmFactory: HydroSlice });
 
     document.getElementById('btn-load').addEventListener('click', async () => {
       const file = document.getElementById('grb-file').files[0];
@@ -352,12 +352,12 @@
       const status = document.getElementById('load-status');
       status.innerHTML = '<span class="warn">Loading...</span>';
       try {
-        console.log('[sciwrid] Reading file:', file.name, `(${(file.size / 1024).toFixed(1)} KB)`);
+        console.log('[hydroslice] Reading file:', file.name, `(${(file.size / 1024).toFixed(1)} KB)`);
         await lib.read(file);
         const vars = lib.getvariables();
         const supported = vars.filter(v => v.supported);
-        console.log('[sciwrid] Load complete.', vars.length, 'variables found:', vars.map(v => v.name));
-        console.log('[sciwrid] Supported (extractable):', supported.map(v => v.name));
+        console.log('[hydroslice] Load complete.', vars.length, 'variables found:', vars.map(v => v.name));
+        console.log('[hydroslice] Supported (extractable):', supported.map(v => v.name));
         status.innerHTML = '<span class="success">Loaded! ' + vars.length + ' variable(s) found, '
           + supported.length + ' extractable.</span>';
 
@@ -371,7 +371,7 @@
           sel.appendChild(opt);
         });
       } catch (e) {
-        console.error('[sciwrid] Load failed:', e);
+        console.error('[hydroslice] Load failed:', e);
         status.innerHTML = '<span class="error">' + e.message + '</span>';
       }
     });
@@ -381,10 +381,10 @@
       try {
         const result = fn();
         out.textContent = JSON.stringify(result, null, 2);
-        console.log('[sciwrid] inspect result:', result);
+        console.log('[hydroslice] inspect result:', result);
       } catch (e) {
         out.textContent = 'Error: ' + e.message;
-        console.error('[sciwrid] inspect error:', e);
+        console.error('[hydroslice] inspect error:', e);
       }
     }
 
@@ -424,7 +424,7 @@
 
         const out = await lib.extract(opts);
         outEl.textContent = (typeof out === 'string') ? out : JSON.stringify(out, null, 2);
-        console.log('[sciwrid] extract result:', out);
+        console.log('[hydroslice] extract result:', out);
 
         lastExtractResult   = out;
         lastExtractType     = type;
@@ -432,7 +432,7 @@
       } catch (e) {
         outEl.textContent   = 'Error: ' + e.message;
         downloadEl.disabled = true;
-        console.error('[sciwrid] extract error:', e);
+        console.error('[hydroslice] extract error:', e);
       }
     }
 
@@ -451,7 +451,7 @@
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
       a.href     = url;
-      a.download = `sciwrid_extract.${ext}`;
+      a.download = `hydroslice_extract.${ext}`;
       a.click();
       URL.revokeObjectURL(url);
     });
@@ -464,8 +464,8 @@
 
     // Expose for console debugging
     window.lib = lib;
-    console.log('[sciwrid] Library ready. Try `lib` in the console.');
-    console.log('[sciwrid] API: lib.read(file), lib.metadata(), lib.getvariables(), lib.variables(), lib.extract({...}), lib.close()');
+    console.log('[hydroslice] Library ready. Try `lib` in the console.');
+    console.log('[hydroslice] API: lib.read(file), lib.metadata(), lib.getvariables(), lib.variables(), lib.extract({...}), lib.close()');
   </script>
 </body>
 </html>

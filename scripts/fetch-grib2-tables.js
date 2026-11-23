@@ -78,7 +78,7 @@ const raw = (p, sha) =>
 async function fetchText(url, { optional = false } = {}) {
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const res = await fetch(url, { headers: { 'User-Agent': 'sciwrid-toolkit-build' } });
+      const res = await fetch(url, { headers: { 'User-Agent': 'hydroslice-build' } });
       if (res.status === 404 && optional) return null;
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return await res.text();
@@ -184,7 +184,7 @@ const unmappedSolidus = new Set();
  *
  * Three upstream inconsistencies land in this field, and all three break the
  * SAME thing. scan() publishes `units` as a DEDUPLICATED list
- * (lib/sciwrid-lib.js), and a single GRIB2 file draws parameters from both the
+ * (lib/hydroslice-lib.js), and a single GRIB2 file draws parameters from both the
  * WMO table and its centre's local table:
  *
  *   - localConcepts writes Fortran exponents:  "kg m**-2"  vs  "kg m-2"

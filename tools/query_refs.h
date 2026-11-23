@@ -92,6 +92,9 @@ refs_dataset_t* refs_open_from_arrays_2d(const char* var_name,
 int      refs_is_curvilinear(const refs_dataset_t* ds);
 uint32_t refs_find_nearest_cell(const refs_dataset_t* ds, double lat, double lon);
 float    refs_cell_lat(const refs_dataset_t* ds, uint32_t iy, uint32_t ix);
+/* Per-cell coordinates, ny*nx row-major; NULL unless the grid is curvilinear. */
+const float* refs_lat2d(const refs_dataset_t* ds);
+const float* refs_lon2d(const refs_dataset_t* ds);
 float    refs_cell_lon(const refs_dataset_t* ds, uint32_t iy, uint32_t ix);
 
 #endif /* QUERY_REFS_H */

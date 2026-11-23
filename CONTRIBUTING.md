@@ -1,9 +1,9 @@
-# Contributing to SciWrid Toolkit
+# Contributing to HydroSlice
 
 ## Toolchain at a glance
 
-SciWrid Toolkit is a **JavaScript/TypeScript library** with a small C core compiled
-to WebAssembly. The compiled `wasm/sciwrid.wasm` is committed, so day-to-day
+HydroSlice is a **JavaScript/TypeScript library** with a small C core compiled
+to WebAssembly. The compiled `wasm/hydroslice.wasm` is committed, so day-to-day
 work needs only **Node 18+** - no Python, no Emscripten.
 
 ## Common commands
@@ -39,7 +39,7 @@ Only if you edit C in `formats/` or `wasm/`:
 npm run build:wasm     # requires Emscripten (emcc) on PATH
 ```
 
-Commit the regenerated `wasm/sciwrid.wasm` so other contributors and the
+Commit the regenerated `wasm/hydroslice.wasm` so other contributors and the
 published package never have to compile it.
 
 ## Releasing

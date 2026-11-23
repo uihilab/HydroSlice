@@ -79,7 +79,7 @@ function buildHeader(begins) {
     Buffer.from([0x43, 0x44, 0x46, 0x01]),
     u32(0),
     dimList,
-    attrList([attr('title', NC_CHAR, 'SciWrid NetCDF3 test fixture'),
+    attrList([attr('title', NC_CHAR, 'HydroSlice NetCDF3 fixture'),
               attr('Conventions', NC_CHAR, 'CF-1.6')]),
     varList,
   ]);

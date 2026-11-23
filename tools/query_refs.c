@@ -646,6 +646,9 @@ refs_dataset_t* refs_open_from_arrays_2d(const char* var_name,
 
 int refs_is_curvilinear(const refs_dataset_t* ds) { return ds ? ds->is_curvilinear : 0; }
 
+const float* refs_lat2d(const refs_dataset_t* ds) { return ds->is_curvilinear ? ds->lat2d : NULL; }
+const float* refs_lon2d(const refs_dataset_t* ds) { return ds->is_curvilinear ? ds->lon2d : NULL; }
+
 float refs_cell_lat(const refs_dataset_t* ds, uint32_t iy, uint32_t ix) {
     if (ds->is_curvilinear) return ds->lat2d[(size_t)iy * ds->nx + ix];
     return ds->lats ? ds->lats[iy] : 0.0f;

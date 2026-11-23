@@ -63,12 +63,12 @@ const quiet = flag('quiet');
 
 /* When --dist is on, the demos' source imports resolve to the built bundle.
  * dist/index.js exports the union of all four modules' public names (checked:
- * scan/extract/extractGrid/trim/detectFormat/SciWridToolkit/resolveRamp/
+ * scan/extract/extractGrid/trim/detectFormat/HydroSlice/resolveRamp/
  * sampleRamp/RAMPS and the error classes), so one alias target covers them. */
 const DIST_ALIASES = {
   '/index.js':             '/dist/index.js',
-  '/lib/sciwrid-api.js':   '/dist/index.js',
-  '/lib/sciwrid-lib.js':   '/dist/index.js',
+  '/lib/hydroslice-api.js':   '/dist/index.js',
+  '/lib/hydroslice-lib.js':   '/dist/index.js',
   '/lib/render/index.js':  '/dist/index.js',
 };
 
@@ -212,7 +212,7 @@ function start(tryPort, attemptsLeft) {
   });
   server.listen(tryPort, '127.0.0.1', () => {
     const mode = useDist ? 'dist/ (as published)' : 'lib/ source';
-    console.log(`SciWrid dev server`);
+    console.log(`HydroSlice dev server`);
     console.log(`  site    ${docsRoot}  (served at /)`);
     console.log(`  serving ${mode}`);
     console.log(`  ranges  enabled (HEAD, 206, 416)`);

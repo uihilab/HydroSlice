@@ -5,8 +5,8 @@
 // and transfer ImageBitmaps rather than raw grids to keep playback off the main
 // thread.
 
-import { extractGrid, gridToImageData } from 'https://cdn.jsdelivr.net/gh/uihilab/SciWrid-Toolkit@main/dist/index.js';
-import { autoRange } from 'https://cdn.jsdelivr.net/gh/uihilab/SciWrid-Toolkit@main/dist/index.js';
+import { extractGrid, gridToImageData } from 'https://cdn.jsdelivr.net/gh/uihilab/HydroSlice@main/dist/index.js';
+import { autoRange } from 'https://cdn.jsdelivr.net/gh/uihilab/HydroSlice@main/dist/index.js';
 import { mercatorWarpGrid } from './map-demo-bbox.js';
 
 let animCancelled = null;
