@@ -3,7 +3,7 @@
 # Prerequisites: Emscripten (emcc) installed and activated
 #
 # Usage:
-#   make            build sciwrid.js + sciwrid.wasm
+#   make            build hydroslice.js + hydroslice.wasm
 #   make clean      remove build artifacts
 
 EMCC ?= emcc
@@ -14,7 +14,7 @@ SRCS = wasm_api.c \
        ../formats/grib2/grib2_metadata.c \
        ../formats/netcdf/netcdf3.c
 
-OUT = sciwrid.js
+OUT = hydroslice.js
 
 CFLAGS = -O2 -std=c99 -I..
 
@@ -24,7 +24,7 @@ EMFLAGS = \
   -sALLOW_MEMORY_GROWTH=1 \
   -sMODULARIZE=1 \
   -sEXPORT_ES6=1 \
-  -sEXPORT_NAME=SciWridToolkit \
+  -sEXPORT_NAME=HydroSlice \
   -sENVIRONMENT=web,worker,node \
   -sNO_EXIT_RUNTIME=1
 
@@ -36,4 +36,4 @@ $(OUT): $(SRCS)
 	$(EMCC) $(CFLAGS) $(EMFLAGS) -o $@ $^ -lm
 
 clean:
-	-rm -f sciwrid.js sciwrid.wasm
+	-rm -f hydroslice.js hydroslice.wasm

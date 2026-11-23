@@ -544,7 +544,7 @@
   <header class="site-header">
     <div class="site-header-inner">
       <a class="brand" href="index.html">
-        <img class="brand-mark" src="logo-sciwrid.svg" alt="SciWrid" width="32" height="32">
+        <img class="brand-mark" src="logo-hydroslice.svg" alt="HydroSlice" width="32" height="32">
         <span>
           <strong>HydroSlice</strong>
         </span>
@@ -584,7 +584,7 @@
       <h1 id="page-title">hydroslice/api — functional demo</h1>
       <p class="muted">
         Calls <code>scan</code>, <code>extract</code>, <code>extractOutput</code> from
-        <code>sciwrid-api.js</code> directly. Open the browser console to see every result logged.
+        <code>hydroslice-api.js</code> directly. Open the browser console to see every result logged.
       </p>
     </section>
 
@@ -719,7 +719,7 @@
 
   <!-- No import map needed: the lib loads h5wasm from jsdelivr CDN on demand.
        If you'd rather mirror it, pass `{ h5wasmUrl: '<your-url>' }` to the
-       SciWridToolkit class constructor or via the functional API's `wasmFactory`. -->
+       HydroSlice class constructor or via the functional API's `wasmFactory`. -->
 
   <script type="module">
     /* One request for the whole library. Published, that is the pinned CDN
@@ -734,7 +734,7 @@
     const {
       detectFormat, scan, extract, extractOutput, extractGrid,
       gridToJSON, gridToGeoTIFF, encodeGrid, EXPORT_FORMATS, trim,
-      SciWridError, TrimError,
+      HydroSliceError, TrimError,
     } = await import(LIB_URL);
     import { notifyStatus } from './notify.js';
 
@@ -771,7 +771,7 @@
     }
     function requireFile() {
       const f = fileInput.files[0];
-      if (!f) throw new SciWridError('Pick a file first.');
+      if (!f) throw new HydroSliceError('Pick a file first.');
       return f;
     }
     function resetResultsForNewFile() {
@@ -851,7 +851,7 @@
     function buildExtractOpts() {
       const variable = $('ex-var').value.trim()
         || (lastScan?.variables.find(v => v.supported)?.name);
-      if (!variable) throw new SciWridError('Run scan() first or type a variable name.');
+      if (!variable) throw new HydroSliceError('Run scan() first or type a variable name.');
       const opts = {
         variable,
         lat: parseFloat($('ex-lat').value),
@@ -934,7 +934,7 @@
     function buildGridOpts() {
       const variable = $('g-var').value.trim()
         || (lastScan?.variables.find(v => v.supported)?.name);
-      if (!variable) throw new SciWridError('Run scan() first or type a variable name.');
+      if (!variable) throw new HydroSliceError('Run scan() first or type a variable name.');
       const opts = {
         variable,
         bbox: [
@@ -952,9 +952,9 @@
       if (gDate !== '') opts.date = gDate;
       else opts.time = parseInt($('g-time').value, 10) || 0;
       if (!(opts.bbox[2] > opts.bbox[0]) || !(opts.bbox[3] > opts.bbox[1]))
-        throw new SciWridError('bbox: max must be greater than min');
-      if (!Number.isFinite(opts.width)  || opts.width  <= 0) throw new SciWridError('width must be > 0');
-      if (!Number.isFinite(opts.height) || opts.height <= 0) throw new SciWridError('height must be > 0');
+        throw new HydroSliceError('bbox: max must be greater than min');
+      if (!Number.isFinite(opts.width)  || opts.width  <= 0) throw new HydroSliceError('width must be > 0');
+      if (!Number.isFinite(opts.height) || opts.height <= 0) throw new HydroSliceError('height must be > 0');
       return opts;
     }
 

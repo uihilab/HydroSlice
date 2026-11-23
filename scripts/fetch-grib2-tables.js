@@ -184,7 +184,7 @@ const unmappedSolidus = new Set();
  *
  * Three upstream inconsistencies land in this field, and all three break the
  * SAME thing. scan() publishes `units` as a DEDUPLICATED list
- * (lib/sciwrid-lib.js), and a single GRIB2 file draws parameters from both the
+ * (lib/hydroslice-lib.js), and a single GRIB2 file draws parameters from both the
  * WMO table and its centre's local table:
  *
  *   - localConcepts writes Fortran exponents:  "kg m**-2"  vs  "kg m-2"

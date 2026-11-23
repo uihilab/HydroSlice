@@ -34,7 +34,7 @@ export type {
   GridImageData,
   TrimOptions,
   TrimResult,
-} from './lib/sciwrid-api.js';
+} from './lib/hydroslice-api.js';
 
 export {
   encodeGrid,
@@ -57,17 +57,17 @@ export {
   sampleRamp,
   detectFormat,
   trim,
-  SciWridError,
+  HydroSliceError,
   UnsupportedFormatError,
   VariableNotFoundError,
   SourceError,
   ExtractError,
   TrimError,
   UnsupportedCRSError,
-} from './lib/sciwrid-api.js';
+} from './lib/hydroslice-api.js';
 
 // Low-level class API
-export { SciWridToolkit } from './lib/sciwrid-lib.js';
+export { HydroSlice } from './lib/hydroslice-lib.js';
 
-import type { default as _default } from './lib/sciwrid-lib.js';
+import type { default as _default } from './lib/hydroslice-lib.js';
 export default _default;

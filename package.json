@@ -21,8 +21,8 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./wasm": "./dist/sciwrid.js",
-    "./wasm-binary": "./dist/sciwrid.wasm",
+    "./wasm": "./dist/hydroslice.js",
+    "./wasm-binary": "./dist/hydroslice.wasm",
     "./worker": "./dist/loader.js"
   },
   "files": [
